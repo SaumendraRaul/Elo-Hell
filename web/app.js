@@ -703,12 +703,35 @@ def analyze_fen(fen, depth, time_limit):
     return json.dumps(_analysis_for(target, depth, time_limit))
 
 def engine_play(depth, time_limit):
-    analysis = _analysis_for(board, depth, time_limit)
     result = engine.choose_move(
         board,
         max_depth=int(depth),
         time_limit=float(time_limit),
     )
+
+    if board.turn == chess.WHITE:
+        white_score = result.score_cp
+        white_mate = result.mate_in
+    else:
+        white_score = -result.score_cp
+        white_mate = -result.mate_in if result.mate_in is not None else None
+
+    pv_board = board.copy(stack=False)
+    pv_san = []
+    for pv_move in result.pv:
+        if pv_move not in pv_board.legal_moves:
+            break
+        pv_san.append(pv_board.san(pv_move))
+        pv_board.push(pv_move)
+
+    analysis = {
+        "white_score_cp": white_score,
+        "white_mate_in": white_mate,
+        "depth": result.depth,
+        "nodes": result.nodes,
+        "elapsed": result.elapsed,
+        "pv_san": pv_san,
+    }
 
     if result.move is None:
         return _payload(board, analysis)
