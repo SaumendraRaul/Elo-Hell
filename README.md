@@ -49,6 +49,10 @@ Moves are entered in SAN, for example `e4`, `Nf3`, `O-O`.
 pytest -q
 ```
 
+## Web version
+
+GitHub Pages is deployed through Actions. The browser version runs the real Python engine client-side with Pyodide, so there is no Stockfish backend and no server required.
+
 ## Roadmap
 
 The fun stuff comes next: stronger evaluation, killer/history heuristics, aspiration windows, opening book support, proper UCI support, endgame tuning, and eventually a web board.
