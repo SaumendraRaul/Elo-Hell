@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#09090b" />
+  <title>Elo Hell</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="brand">
+        <span class="brand-mark">♞</span>
+        <div>
+          <p class="eyebrow">Billi's chess engine</p>
+          <h1>Elo <span>Hell</span></h1>
+        </div>
+      </div>
+      <p class="tagline">Every blunder deserves a search tree.</p>
+    </section>
+
+    <section class="game-layout">
+      <div class="board-wrap">
+        <div id="board" class="board" aria-label="Chess board"></div>
+        <div class="board-glow"></div>
+      </div>
+
+      <aside class="panel">
+        <div class="status-card">
+          <span id="status-dot" class="dot loading"></span>
+          <div>
+            <p class="label">ENGINE STATUS</p>
+            <strong id="status">Loading Python engine…</strong>
+          </div>
+        </div>
+
+        <div class="controls">
+          <label>
+            <span>Play as</span>
+            <select id="side" disabled>
+              <option value="w">White</option>
+              <option value="b">Black</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Difficulty</span>
+            <select id="difficulty" disabled>
+              <option value="2,0.15">Purgatory</option>
+              <option value="3,0.35" selected>Bad Decisions</option>
+              <option value="4,0.8">Elo Hell</option>
+              <option value="5,1.5">Billi Mode</option>
+            </select>
+          </label>
+
+          <button id="new-game" disabled>New game</button>
+        </div>
+
+        <div class="engine-card">
+          <div>
+            <span class="metric-label">Last engine move</span>
+            <strong id="engine-move">—</strong>
+          </div>
+          <div>
+            <span class="metric-label">Depth</span>
+            <strong id="depth">—</strong>
+          </div>
+          <div>
+            <span class="metric-label">Nodes</span>
+            <strong id="nodes">—</strong>
+          </div>
+          <div>
+            <span class="metric-label">Eval</span>
+            <strong id="eval">—</strong>
+          </div>
+        </div>
+
+        <div class="move-card">
+          <p class="label">GAME</p>
+          <p id="game-text">Warming up the search tree…</p>
+          <p id="pv" class="pv"></p>
+        </div>
+
+        <p class="footer-note">
+          Runs entirely in your browser with Pyodide. No Stockfish hiding under the floorboards.
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.js"></script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
