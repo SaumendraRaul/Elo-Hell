@@ -4,12 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="theme-color" content="#09090b" />
-  <title>Elo Hell</title>
+  <title>Elo Hell · Game Review</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <main class="shell">
-    <section class="hero">
+    <header class="topbar">
       <div class="brand">
         <span class="brand-mark">♞</span>
         <div>
@@ -17,75 +17,180 @@
           <h1>Elo <span>Hell</span></h1>
         </div>
       </div>
-      <p class="tagline">Every blunder deserves a search tree.</p>
+      <div class="mode-switch" role="tablist" aria-label="Elo Hell mode">
+        <button class="mode-btn active" data-view="review">Game review</button>
+        <button class="mode-btn" data-view="play">Play engine</button>
+      </div>
+    </header>
+
+    <section id="review-view" class="view active">
+      <div class="review-grid">
+        <section class="board-column">
+          <div class="board-shell">
+            <div class="eval-bar" aria-label="Evaluation bar">
+              <div id="eval-white" class="eval-white"></div>
+              <span id="eval-bar-label" class="eval-label">0.0</span>
+            </div>
+            <div class="board-wrap">
+              <div id="review-board" class="board" aria-label="Review chess board"></div>
+            </div>
+          </div>
+
+          <div id="selected-analysis" class="analysis-strip">
+            <div>
+              <span class="metric-label">Selected move</span>
+              <strong id="selected-move">Start position</strong>
+            </div>
+            <div>
+              <span class="metric-label">Classification</span>
+              <strong id="selected-class">—</strong>
+            </div>
+            <div>
+              <span class="metric-label">Best move</span>
+              <strong id="selected-best">—</strong>
+            </div>
+            <div>
+              <span class="metric-label">Eval loss</span>
+              <strong id="selected-loss">—</strong>
+            </div>
+          </div>
+        </section>
+
+        <aside class="review-panel">
+          <section class="upload-card">
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">Primary workflow</p>
+                <h2>Review a PGN</h2>
+              </div>
+              <span id="engine-pill" class="pill loading">Loading engine…</span>
+            </div>
+
+            <label id="drop-zone" class="drop-zone">
+              <input id="pgn-file" type="file" accept=".pgn,.txt,text/plain" />
+              <span class="drop-icon">⇧</span>
+              <strong>Drop a PGN here</strong>
+              <small>or click to choose a file</small>
+            </label>
+
+            <details class="paste-box">
+              <summary>Paste PGN instead</summary>
+              <textarea id="pgn-text" rows="7" placeholder='[Event "Live Chess"]&#10;1. e4 e5 2. Nf3 ...'></textarea>
+              <button id="load-pasted" class="secondary-btn">Load pasted PGN</button>
+            </details>
+
+            <div class="review-controls">
+              <label>
+                <span>Review strength</span>
+                <select id="review-strength">
+                  <option value="2,0.06">Quick</option>
+                  <option value="3,0.15" selected>Standard</option>
+                  <option value="4,0.4">Deep</option>
+                </select>
+              </label>
+              <button id="analyze-game" disabled>Analyze game</button>
+            </div>
+
+            <div id="review-progress" class="progress-wrap hidden">
+              <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+              <span id="progress-text">0%</span>
+            </div>
+          </section>
+
+          <section id="game-meta" class="game-card muted">
+            <div>
+              <span class="metric-label">Game</span>
+              <strong id="game-title">Upload a PGN to begin</strong>
+              <p id="game-subtitle">Elo Hell will inspect every move and point out where the position caught fire.</p>
+            </div>
+          </section>
+
+          <section id="summary-card" class="summary-card hidden">
+            <div class="summary-head">
+              <div>
+                <span class="metric-label">Review summary</span>
+                <strong id="result-line">—</strong>
+              </div>
+              <span id="review-status" class="pill">Ready</span>
+            </div>
+            <div id="class-counts" class="class-counts"></div>
+          </section>
+
+          <section class="moves-card">
+            <div class="moves-head">
+              <span class="metric-label">Moves</span>
+              <span id="move-count">0 plies</span>
+            </div>
+            <div id="moves-list" class="moves-list empty-state">
+              Your reviewed moves will appear here.
+            </div>
+          </section>
+
+          <section class="line-card">
+            <span class="metric-label">Engine line</span>
+            <p id="review-pv">Select a reviewed move to see Elo Hell's preferred continuation.</p>
+          </section>
+        </aside>
+      </div>
     </section>
 
-    <section class="game-layout">
-      <div class="board-wrap">
-        <div id="board" class="board" aria-label="Chess board"></div>
-        <div class="board-glow"></div>
+    <section id="play-view" class="view">
+      <div class="play-grid">
+        <section class="board-column">
+          <div class="board-shell play-board-shell">
+            <div class="eval-bar">
+              <div id="play-eval-white" class="eval-white"></div>
+              <span id="play-eval-label" class="eval-label">0.0</span>
+            </div>
+            <div class="board-wrap">
+              <div id="play-board" class="board" aria-label="Play chess board"></div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="play-panel">
+          <div class="status-card">
+            <span id="status-dot" class="dot loading"></span>
+            <div>
+              <p class="label">Engine status</p>
+              <strong id="status">Loading Python engine…</strong>
+            </div>
+          </div>
+
+          <div class="controls">
+            <label>
+              <span>Play as</span>
+              <select id="side" disabled>
+                <option value="w">White</option>
+                <option value="b">Black</option>
+              </select>
+            </label>
+            <label>
+              <span>Difficulty</span>
+              <select id="difficulty" disabled>
+                <option value="2,0.15">Purgatory</option>
+                <option value="3,0.35" selected>Bad Decisions</option>
+                <option value="4,0.8">Elo Hell</option>
+                <option value="5,1.5">Billi Mode</option>
+              </select>
+            </label>
+            <button id="new-game" disabled>New game</button>
+          </div>
+
+          <div class="engine-card">
+            <div><span class="metric-label">Last engine move</span><strong id="engine-move">—</strong></div>
+            <div><span class="metric-label">Depth</span><strong id="depth">—</strong></div>
+            <div><span class="metric-label">Nodes</span><strong id="nodes">—</strong></div>
+            <div><span class="metric-label">Eval</span><strong id="eval">—</strong></div>
+          </div>
+
+          <div class="move-card">
+            <p class="label">Game</p>
+            <p id="game-text">Warming up the search tree…</p>
+            <p id="pv" class="pv"></p>
+          </div>
+        </aside>
       </div>
-
-      <aside class="panel">
-        <div class="status-card">
-          <span id="status-dot" class="dot loading"></span>
-          <div>
-            <p class="label">ENGINE STATUS</p>
-            <strong id="status">Loading Python engine…</strong>
-          </div>
-        </div>
-
-        <div class="controls">
-          <label>
-            <span>Play as</span>
-            <select id="side" disabled>
-              <option value="w">White</option>
-              <option value="b">Black</option>
-            </select>
-          </label>
-
-          <label>
-            <span>Difficulty</span>
-            <select id="difficulty" disabled>
-              <option value="2,0.15">Purgatory</option>
-              <option value="3,0.35" selected>Bad Decisions</option>
-              <option value="4,0.8">Elo Hell</option>
-              <option value="5,1.5">Billi Mode</option>
-            </select>
-          </label>
-
-          <button id="new-game" disabled>New game</button>
-        </div>
-
-        <div class="engine-card">
-          <div>
-            <span class="metric-label">Last engine move</span>
-            <strong id="engine-move">—</strong>
-          </div>
-          <div>
-            <span class="metric-label">Depth</span>
-            <strong id="depth">—</strong>
-          </div>
-          <div>
-            <span class="metric-label">Nodes</span>
-            <strong id="nodes">—</strong>
-          </div>
-          <div>
-            <span class="metric-label">Eval</span>
-            <strong id="eval">—</strong>
-          </div>
-        </div>
-
-        <div class="move-card">
-          <p class="label">GAME</p>
-          <p id="game-text">Warming up the search tree…</p>
-          <p id="pv" class="pv"></p>
-        </div>
-
-        <p class="footer-note">
-          Runs entirely in your browser with Pyodide. No Stockfish hiding under the floorboards.
-        </p>
-      </aside>
     </section>
   </main>
 
