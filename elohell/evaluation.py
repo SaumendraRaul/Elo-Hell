@@ -13,7 +13,7 @@ PIECE_VALUES = {
     chess.KING: 0,
 }
 
-# Tables are indexed from White's perspective: a1 -> h8.
+# Tables are written rank 8 -> rank 1 (a8 -> h1), matching common PST notation.
 PAWN_TABLE = [
       0,   0,   0,   0,   0,   0,   0,   0,
      50,  50,  50,  50,  50,  50,  50,  50,
@@ -91,7 +91,9 @@ TABLES = {
 
 
 def _square_for_color(square: chess.Square, color: chess.Color) -> chess.Square:
-    return square if color == chess.WHITE else chess.square_mirror(square)
+    # python-chess indexes a1 as 0, while these tables begin at a8.
+    # Mirror White squares into table coordinates; Black already lines up.
+    return chess.square_mirror(square) if color == chess.WHITE else square
 
 
 def _pawn_structure(board: chess.Board, color: chess.Color) -> int:
