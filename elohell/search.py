@@ -128,8 +128,10 @@ class Searcher:
         for move in self._ordered_moves(board, tt_move):
             self._check_time()
             board.push(move)
-            score = -self._negamax(board, depth - 1, -beta, -alpha, 1)
-            board.pop()
+            try:
+                score = -self._negamax(board, depth - 1, -beta, -alpha, 1)
+            finally:
+                board.pop()
 
             if score > best_score:
                 best_score = score
@@ -185,8 +187,10 @@ class Searcher:
 
         for move in self._ordered_moves(board, tt_move):
             board.push(move)
-            score = -self._negamax(board, depth - 1, -beta, -alpha, ply + 1)
-            board.pop()
+            try:
+                score = -self._negamax(board, depth - 1, -beta, -alpha, ply + 1)
+            finally:
+                board.pop()
 
             if score > best_score:
                 best_score = score
@@ -244,10 +248,12 @@ class Searcher:
             best = -INFINITY
             for move in self._ordered_moves(board, None, moves):
                 board.push(move)
-                score = -self._quiescence(
-                    board, -beta, -alpha, ply + 1, qdepth + 1
-                )
-                board.pop()
+                try:
+                    score = -self._quiescence(
+                        board, -beta, -alpha, ply + 1, qdepth + 1
+                    )
+                finally:
+                    board.pop()
 
                 best = max(best, score)
                 alpha = max(alpha, score)
@@ -269,10 +275,12 @@ class Searcher:
 
         for move in self._ordered_moves(board, None, tactical_moves):
             board.push(move)
-            score = -self._quiescence(
-                board, -beta, -alpha, ply + 1, qdepth + 1
-            )
-            board.pop()
+            try:
+                score = -self._quiescence(
+                    board, -beta, -alpha, ply + 1, qdepth + 1
+                )
+            finally:
+                board.pop()
 
             if score >= beta:
                 return beta
