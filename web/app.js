@@ -594,7 +594,8 @@ sys.path.insert(0, "/home/pyodide")
 from elohell import EloHellEngine
 
 board = chess.Board()
-engine = EloHellEngine()
+play_engine = EloHellEngine()
+review_engine = EloHellEngine()
 
 def _status_text(target):
     outcome = target.outcome(claim_draw=True)
@@ -625,7 +626,7 @@ def _payload(target, extra=None):
 def reset_game():
     global board
     board = chess.Board()
-    engine.new_game()
+    play_engine.new_game()
     return _payload(board)
 
 def position_state(fen):
@@ -659,8 +660,8 @@ def move_piece(origin, destination):
         "last_san": san,
     })
 
-def _analysis_for(target, depth, time_limit):
-    result = engine.choose_move(
+def _analysis_for(target, depth, time_limit, engine_instance):
+    result = engine_instance.choose_move(
         target,
         max_depth=int(depth),
         time_limit=float(time_limit),
@@ -700,10 +701,11 @@ def _analysis_for(target, depth, time_limit):
 
 def analyze_fen(fen, depth, time_limit):
     target = chess.Board(fen)
-    return json.dumps(_analysis_for(target, depth, time_limit))
+    review_engine.new_game()
+    return json.dumps(_analysis_for(target, depth, time_limit, review_engine))
 
 def engine_play(depth, time_limit):
-    result = engine.choose_move(
+    result = play_engine.choose_move(
         board,
         max_depth=int(depth),
         time_limit=float(time_limit),
