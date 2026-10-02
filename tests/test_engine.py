@@ -58,3 +58,30 @@ def test_billidaaku_qxg2_checkmate():
 
     board.push(result.move)
     assert board.is_checkmate()
+
+
+def test_timed_search_never_mutates_callers_board():
+    board = chess.Board()
+    original_fen = board.fen()
+    engine = EloHellEngine()
+
+    result = engine.choose_move(board, max_depth=8, time_limit=0.01)
+
+    assert board.fen() == original_fen
+    assert result.move is None or result.move in board.legal_moves
+
+
+def test_reusing_engine_across_unrelated_positions_returns_legal_moves():
+    engine = EloHellEngine()
+    positions = [
+        chess.Board(),
+        chess.Board("r1bqk1nr/ppppbppp/n7/4p3/2B1P3/7N/PPPP1PPP/RNBQK2R w KQkq - 4 4"),
+        chess.Board("rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 2"),
+    ]
+
+    for board in positions:
+        original_fen = board.fen()
+        result = engine.choose_move(board, max_depth=3, time_limit=0.03)
+
+        assert board.fen() == original_fen
+        assert result.move is None or result.move in board.legal_moves
