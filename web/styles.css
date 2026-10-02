@@ -889,3 +889,55 @@ select:disabled {
     min-height: 0;
   }
 }
+
+
+/* Chess geometry guardrails: the board and every cell are always square. */
+.board {
+  aspect-ratio: 1 / 1;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+}
+
+.square {
+  min-width: 0;
+  min-height: 0;
+  aspect-ratio: 1 / 1;
+}
+
+@media (min-width: 861px) {
+  :root {
+    --desktop-board-size: min(
+      780px,
+      calc(100vh - 150px),
+      calc(100vw - 500px)
+    );
+  }
+
+  .board-column {
+    grid-template-rows: var(--desktop-board-size) auto;
+  }
+
+  .board-shell {
+    width: calc(var(--desktop-board-size) + 37px);
+    height: var(--desktop-board-size);
+    grid-template-columns: 30px var(--desktop-board-size);
+    align-items: stretch;
+  }
+
+  .board-wrap {
+    width: var(--desktop-board-size);
+    height: var(--desktop-board-size);
+    max-width: var(--desktop-board-size);
+    max-height: var(--desktop-board-size);
+    aspect-ratio: 1 / 1;
+  }
+
+  .board {
+    width: var(--desktop-board-size);
+    height: var(--desktop-board-size);
+  }
+
+  .eval-bar {
+    height: var(--desktop-board-size);
+  }
+}
